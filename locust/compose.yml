@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  locust-master:
+    build: .
+    ports:
+      - "8089:8089"
+    volumes:
+      - ./:/app
+    command: --master --web-host=0.0.0.0
+    environment:
+      - LOCUST_HOST=http://localhost:8762
+    networks:
+      - locust-network
+
+  locust-worker:
+    build: .
+    volumes:
+      - ./:/app
+    command: --worker --master-host=locust-master
+    depends_on:
+      - locust-master
+    deploy:
+      replicas: 2
+    networks:
+      - locust-network
+
+networks:
+  locust-network:
+    driver: bridge
