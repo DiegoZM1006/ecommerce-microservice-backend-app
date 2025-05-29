@@ -1,0 +1,1579 @@
+{
+	"info": {
+		"_postman_id": "90de1202-d337-44fe-8342-eb0ec7955ba5",
+		"name": "E2E-tests",
+		"description": "# 🚀 Get started here\n\nThis template guides you through CRUD operations (GET, POST, PUT, DELETE), variables, and tests.\n\n## 🔖 **How to use this template**\n\n#### **Step 1: Send requests**\n\nRESTful APIs allow you to perform CRUD operations using the POST, GET, PUT, and DELETE HTTP methods.\n\nThis collection contains each of these [request](https://learning.postman.com/docs/sending-requests/requests/) types. Open each request and click \"Send\" to see what happens.\n\n#### **Step 2: View responses**\n\nObserve the response tab for status code (200 OK), response time, and size.\n\n#### **Step 3: Send new Body data**\n\nUpdate or add new data in \"Body\" in the POST request. Typically, Body data is also used in PUT request.\n\n```\n{\n    \"name\": \"Add your name in the body\"\n}\n\n ```\n\n#### **Step 4: Update the variable**\n\nVariables enable you to store and reuse values in Postman. We have created a [variable](https://learning.postman.com/docs/sending-requests/variables/) called `base_url` with the sample request [https://postman-api-learner.glitch.me](https://postman-api-learner.glitch.me). Replace it with your API endpoint to customize this collection.\n\n#### **Step 5: Add tests in the \"Scripts\" tab**\n\nAdding tests to your requests can help you confirm that your API is working as expected. You can write test scripts in JavaScript and view the output in the \"Test Results\" tab.\n\n<img src=\"https://content.pstmn.io/fa30ea0a-373d-4545-a668-e7b283cca343/aW1hZ2UucG5n\" alt=\"\" height=\"1530\" width=\"2162\">\n\n## 💪 Pro tips\n\n- Use folders to group related requests and organize the collection.\n    \n- Add more [scripts](https://learning.postman.com/docs/writing-scripts/intro-to-scripts/) to verify if the API works as expected and execute workflows.\n    \n\n## 💡Related templates\n\n[API testing basics](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9a37a28-055b-49cd-8c7e-97494a21eb54&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[API documentation](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9c28f47-1253-44af-a2f3-20dce4da1f18&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[Authorization methods](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=31a9a6ed-4cdf-4ced-984c-d12c9aec1c27&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "37433479"
+	},
+	"item": [
+		{
+			"name": "Create user",
+			"item": [
+				{
+					"name": "Create user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (OK)\", function () {\r",
+									"    pm.expect(pm.response.code).equals(200)\r",
+									"});\r",
+									"\r",
+									"// Parsear la respuesta JSON\r",
+									"const responseJson = pm.response.json();\r",
+									"\r",
+									"// Guardar el userId en la variable de colección id_user\r",
+									"pm.collectionVariables.set(\"id_user_first\", responseJson.userId);\r",
+									"\r",
+									"// Guardar el credentialId en la variable de colección id_credential\r",
+									"pm.collectionVariables.set(\"id_credential_first\", responseJson.credential.credentialId);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"elbicho\",\n    \"lastName\": \"cr7\",\n    \"imageUrl\": \"https://example.com/profile.jpg\",\n    \"email\": \"cr7@example.com\",\n    \"phone\": \"+1234567890\",\n    \"addressDtos\": [\n        {\n            \"fullAddress\": \"12345 sur\",\n            \"postalCode\": \"12345\",\n            \"city\": \"Cali\"\n        }\n    ],\n    \"credential\": {\n        \"username\": \"cr7Elbicho\",\n        \"password\": \"$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy\",\n        \"roleBasedAuthority\": \"ROLE_USER\",\n        \"isEnabled\": true,\n        \"isAccountNonExpired\": true,\n        \"isAccountNonLocked\": true,\n        \"isCredentialsNonExpired\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user-service/api/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user-service",
+								"api",
+								"users"
+							]
+						},
+						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+					},
+					"response": []
+				},
+				{
+					"name": "Create credential",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (OK)\", function () {",
+									"    pm.expect(pm.response.code).equals(200)",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"credentialId\": {{id_credential_first}},\n    \"username\": \"cr7Elbicho\",\n    \"password\": \"$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy\",\n    \"roleBasedAuthority\": \"ROLE_USER\",\n    \"isEnabled\": true,\n    \"isAccountNonExpired\": true,\n    \"isAccountNonLocked\": true,\n    \"isCredentialsNonExpired\": true,\n    \"user\": {\n        \"userId\": {{id_user_first}},    \n        \"firstName\": \"elbicho\",\n        \"lastName\": \"cr7\",\n        \"imageUrl\": \"https://example.com/profile.jpg\",\n        \"email\": \"cr7@example.com\",\n        \"phone\": \"+1234567890\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user-service/api/credentials",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user-service",
+								"api",
+								"credentials"
+							]
+						},
+						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+					},
+					"response": []
+				},
+				{
+					"name": "Get user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (OK)\", function () {",
+									"    pm.expect(pm.response.code).equals(200)",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user-service/api/users/{{id_user_first}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user-service",
+								"api",
+								"users",
+								"{{id_user_first}}"
+							]
+						},
+						"description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Create category and product",
+			"item": [
+				{
+					"name": "Create category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (OK)\", function () {\r",
+									"    pm.expect(pm.response.code).equals(200)\r",
+									"});\r",
+									"\r",
+									"// Parsear la respuesta JSON\r",
+									"const responseJson = pm.response.json();\r",
+									"\r",
+									"// Guardar el userId en la variable de colección id_user\r",
+									"pm.collectionVariables.set(\"id_category\", responseJson.categoryId);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"categoryId\": {{id_category}},\n    \"categoryTitle\": \"Technology\", \n    \"imageUrl\": \"https://example.com/smartphones.jpg\",\n    \n    \"parentCategory\": {\n        \"categoryId\": {{id_category}},\n        \"categoryTitle\": \"Electronics\",\n        \"imageUrl\": \"https://example.com/electronics.jpg\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/product-service/api/categories",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"product-service",
+								"api",
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create product 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (OK)\", function () {\r",
+									"    pm.expect(pm.response.code).equals(201)\r",
+									"});\r",
+									"\r",
+									"// Parsear la respuesta JSON\r",
+									"const responseJson = pm.response.json();\r",
+									"\r",
+									"// Guardar el userId en la variable de colección id_user\r",
+									"pm.collectionVariables.set(\"id_product1\", responseJson.productId);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\n    \"productTitle\": \"iPhone 16 Pro\",\n    \"imageUrl\": \"https://example.com/iphone15pro.jpg\",\n    \"sku\": \"IPH15PRO001\",\n    \"priceUnit\": 1299.99,\n    \"quantity\": 50,\n    \"category\":\n        {\n            \"categoryId\": {{id_category}},\n            \"categoryTitle\": \"Technology\", \n            \"imageUrl\": \"https://example.com/smartphones.jpg\",\n            \n            \"parentCategory\": {\n                \"categoryId\": {{id_category}},\n                \"categoryTitle\": \"Electronics\",\n                \"imageUrl\": \"https://example.com/electronics.jpg\"\n            }\n        }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/product-service/api/products",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"product-service",
+								"api",
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create product 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (OK)\", function () {\r",
+									"    pm.expect(pm.response.code).equals(201)\r",
+									"});\r",
+									"\r",
+									"// Parsear la respuesta JSON\r",
+									"const responseJson = pm.response.json();\r",
+									"\r",
+									"// Guardar el userId en la variable de colección id_user\r",
+									"pm.collectionVariables.set(\"id_product2\", responseJson.productId);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\n    \"productTitle\": \"Xiaomi nose\",\n    \"imageUrl\": \"https://example.com/iphone15pro.jpg\",\n    \"sku\": \"XIA15PRO001\",\n    \"priceUnit\": 1299.99,\n    \"quantity\": 50,\n    \"category\":\n    {\n            \"categoryId\": {{id_category}},\n            \"categoryTitle\": \"Technology\", \n            \"imageUrl\": \"https://example.com/smartphones.jpg\",\n            \n            \"parentCategory\": {\n                \"categoryId\": {{id_category}},\n                \"categoryTitle\": \"Electronics\",\n                \"imageUrl\": \"https://example.com/electronics.jpg\"\n            }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/product-service/api/products",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"product-service",
+								"api",
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get categories",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (OK)\", function () {\r",
+									"    pm.expect(pm.response.code).equals(200)\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/product-service/api/categories/{{id_category}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"product-service",
+								"api",
+								"categories",
+								"{{id_category}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get product 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (OK)\", function () {\r",
+									"    pm.expect(pm.response.code).equals(200)\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/product-service/api/products/{{id_product1}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"product-service",
+								"api",
+								"products",
+								"{{id_product1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get product 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (OK)\", function () {\r",
+									"    pm.expect(pm.response.code).equals(200)\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/product-service/api/products/{{id_product2}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"product-service",
+								"api",
+								"products",
+								"{{id_product2}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Shopping cart",
+			"item": [
+				{
+					"name": "Create user Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (OK)\", function () {",
+									"    pm.expect(pm.response.code).equals(200)",
+									"});",
+									"",
+									"// Parsear la respuesta JSON",
+									"const responseJson = pm.response.json();",
+									"",
+									"// Guardar el userId en la variable de colección id_user",
+									"pm.collectionVariables.set(\"id_user\", responseJson.userId);",
+									"",
+									"// Guardar el credentialId en la variable de colección id_credential",
+									"pm.collectionVariables.set(\"id_credential\", responseJson.credential.credentialId);",
+									"",
+									"pm.collectionVariables.set(\"firstname\", responseJson.firstName);",
+									"",
+									"pm.collectionVariables.set(\"lastname\", responseJson.lastName);",
+									"",
+									"pm.collectionVariables.set(\"imageurl\", responseJson.imageUrl);",
+									"",
+									"pm.collectionVariables.set(\"email\", responseJson.email);",
+									"",
+									"pm.collectionVariables.set(\"phone\", responseJson.phone);",
+									"",
+									"// Opcional: Verificar que se guardaron correctamente (aparecerá en la consola)",
+									"console.log(\"ID Usuario guardado:\", pm.collectionVariables.get(\"id_user\"));",
+									"console.log(\"ID Credential guardado:\", pm.collectionVariables.get(\"id_credential\"));"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": 6,\n    \"firstName\": \"Lionel\",\n    \"lastName\": \"Messi\",\n    \"imageUrl\": \"https://example.com/profile.jpg\",\n    \"email\": \"messi@example.com\",\n    \"phone\": \"+1234567890\",\n    \"addressDtos\": [\n        {\n            \"fullAddress\": \"12345 sur\",\n            \"postalCode\": \"12345\",\n            \"city\": \"Cali\"\n        }\n    ],\n    \"credential\": {\n        \"username\": \"messilapulga\",\n        \"password\": \"$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy\",\n        \"roleBasedAuthority\": \"ROLE_USER\",\n        \"isEnabled\": true,\n        \"isAccountNonExpired\": true,\n        \"isAccountNonLocked\": true,\n        \"isCredentialsNonExpired\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user-service/api/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user-service",
+								"api",
+								"users"
+							]
+						},
+						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+					},
+					"response": []
+				},
+				{
+					"name": "Create credential Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (OK)\", function () {",
+									"    pm.expect(pm.response.code).equals(200)",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"credentialId\": {{id_credential}},\n    \"username\": \"johndoeaaa\",\n    \"password\": \"$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy\",\n    \"roleBasedAuthority\": \"ROLE_USER\",\n    \"isEnabled\": true,\n    \"isAccountNonExpired\": true,\n    \"isAccountNonLocked\": true,\n    \"isCredentialsNonExpired\": true,\n    \"user\": {\n        \"userId\": {{id_user}},\n        \"firstName\": \"Lionel\",\n        \"lastName\": \"Messi\",\n        \"imageUrl\": \"https://example.com/profile.jpg\",\n        \"email\": \"messi@example.com\",\n        \"phone\": \"+1234567890\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user-service/api/credentials",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user-service",
+								"api",
+								"credentials"
+							]
+						},
+						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+					},
+					"response": []
+				},
+				{
+					"name": "Create cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (OK)\", function () {\r",
+									"    pm.expect(pm.response.code).equals(200)\r",
+									"});\r",
+									"\r",
+									"// Parsear la respuesta JSON\r",
+									"const responseJson = pm.response.json();\r",
+									"\r",
+									"// Guardar el userId en la variable de colección id_user\r",
+									"pm.collectionVariables.set(\"id_cart\", responseJson.cartId);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": {{id_user}},\n\n    \"user\": {\n        \"userId\": {{id_user}},\n        \"firstName\": \"{{firstname}}\",\n        \"lastName\": \"{{lastname}}\",\n        \"imageUrl\": \"{{imageurl}}\",\n        \"email\": \"{{email}}\",\n        \"phone\": \"{{phone}}\"\n    }\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/order-service/api/carts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"order-service",
+								"api",
+								"carts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (OK)\", function () {\r",
+									"    pm.expect(pm.response.code).equals(200)\r",
+									"});\r",
+									"\r",
+									"// Parsear la respuesta JSON\r",
+									"const responseJson = pm.response.json();\r",
+									"\r",
+									"// Guardar el userId en la variable de colección id_user\r",
+									"pm.collectionVariables.set(\"id_order\", responseJson.orderId);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"orderDate\": \"23-05-2025__02:05:55:547092\",\n    \"orderDesc\": \"{{$randomLoremWord}}\",\n    \"orderFee\": {{$randomPrice}},\n    \"cart\": {\n        \"cartId\": {{id_cart}},\n        \"userId\": {{id_user}}\n    }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/order-service/api/orders",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"order-service",
+								"api",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create order 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (OK)\", function () {\r",
+									"    pm.expect(pm.response.code).equals(200)\r",
+									"});\r",
+									"\r",
+									"// Parsear la respuesta JSON\r",
+									"const responseJson = pm.response.json();\r",
+									"\r",
+									"// Guardar el userId en la variable de colección id_user\r",
+									"pm.collectionVariables.set(\"id_order2\", responseJson.orderId);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"orderDate\": \"23-05-2025__02:05:55:547092\",\n    \"orderDesc\": \"{{$randomLoremWord}}\",\n    \"orderFee\": {{$randomPrice}},\n    \"cart\": {\n        \"cartId\": {{id_cart}},\n        \"userId\": {{id_user}}\n    }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/order-service/api/orders",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"order-service",
+								"api",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (OK)\", function () {\r",
+									"    pm.expect(pm.response.code).equals(200)\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/order-service/api/carts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"order-service",
+								"api",
+								"carts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get order 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (OK)\", function () {\r",
+									"    pm.expect(pm.response.code).equals(200)\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base_url}}/order-service/api/orders/{{id_order}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"order-service",
+								"api",
+								"orders",
+								"{{id_order}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get order 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (OK)\", function () {\r",
+									"    pm.expect(pm.response.code).equals(200)\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base_url}}/order-service/api/orders/{{id_order2}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"order-service",
+								"api",
+								"orders",
+								"{{id_order2}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Payment",
+			"item": [
+				{
+					"name": "Create payment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (OK)\", function () {\r",
+									"    pm.expect(pm.response.code).equals(200)\r",
+									"});\r",
+									"\r",
+									"// Parsear la respuesta JSON\r",
+									"const responseJson = pm.response.json();\r",
+									"\r",
+									"// Guardar el userId en la variable de colección id_user\r",
+									"pm.collectionVariables.set(\"id_payment\", responseJson.paymentId);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n\r\n            \"isPayed\": false,\r\n            \"paymentStatus\": \"IN_PROGRESS\",\r\n            \"order\": {\r\n                \"orderId\": {{id_order}}\r\n            }\r\n        }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/payment-service/api/payments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment-service",
+								"api",
+								"payments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update payment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (OK)\", function () {\r",
+									"    pm.expect(pm.response.code).equals(200)\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n            \"paymentId\": {{id_payment}},\r\n            \"isPayed\": false,\r\n            \"paymentStatus\": \"COMPLETED\",\r\n            \"order\": {\r\n                \"orderId\": {{id_order}}\r\n            }\r\n        }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/payment-service/api/payments",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment-service",
+								"api",
+								"payments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get payment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (OK)\", function () {\r",
+									"    pm.expect(pm.response.code).equals(200)\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/payment-service/api/payments/{{id_payment}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"payment-service",
+								"api",
+								"payments",
+								"{{id_payment}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Shipping",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (OK)\", function () {\r",
+									"    pm.expect(pm.response.code).equals(200)\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"productId\": {{id_product1}},\r\n  \"orderId\": {{id_order}},\r\n  \"orderedQuantity\": 1,\r\n  \"product\": {\r\n    \"productId\": {{id_product1}}\r\n  },\r\n  \"order\": {\r\n    \"orderId\": {{id_order}}\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/shipping-service/api/shippings",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"shipping-service",
+								"api",
+								"shippings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Shipping 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (OK)\", function () {\r",
+									"    pm.expect(pm.response.code).equals(200)\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"productId\": {{id_product2}},\r\n  \"orderId\": {{id_order2}},\r\n  \"orderedQuantity\": 1,\r\n  \"product\": {\r\n    \"productId\": {{id_product2}}\r\n  },\r\n  \"order\": {\r\n    \"orderId\": {{id_order2}}\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/shipping-service/api/shippings",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"shipping-service",
+								"api",
+								"shippings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Shipping",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (OK)\", function () {\r",
+									"    pm.expect(pm.response.code).equals(200)\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"productId\": {{id_product1}},\r\n  \"orderId\": {{id_order}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/shipping-service/api/shippings/find",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"shipping-service",
+								"api",
+								"shippings",
+								"find"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Shipping 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (OK)\", function () {\r",
+									"    pm.expect(pm.response.code).equals(200)\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"productId\": {{id_product2}},\r\n  \"orderId\": {{id_order2}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/shipping-service/api/shippings/find",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"shipping-service",
+								"api",
+								"shippings",
+								"find"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete shipping",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (OK)\", function () {\r",
+									"    pm.expect(pm.response.code).equals(200)\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/shipping-service/api/shippings/{{id_order}}/{{id_product1}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"shipping-service",
+								"api",
+								"shippings",
+								"{{id_order}}",
+								"{{id_product1}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Favorite",
+			"item": [
+				{
+					"name": "Create favourite",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (OK)\", function () {\r",
+									"    pm.expect(pm.response.code).equals(200)\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": {{id_user_first}},\r\n    \"productId\": {{id_product1}},\r\n    \"likeDate\": \"22-05-2025__02:05:55:547092\",\r\n    \"user\": {\r\n        \"userId\": {{id_user_first}}\r\n    },\r\n    \"product\": {\r\n        \"productId\": {{id_product1}}\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/favourite-service/api/favourites",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"favourite-service",
+								"api",
+								"favourites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create favourite 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (OK)\", function () {\r",
+									"    pm.expect(pm.response.code).equals(200)\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": {{id_user_first}},\r\n    \"productId\": {{id_product2}},\r\n      \"likeDate\": \"23-05-2025__02:05:55:547092\",\r\n    \"user\": {\r\n        \"userId\": {{id_user_first}}\r\n    },\r\n    \"product\": {\r\n        \"productId\": {{id_product2}}\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/favourite-service/api/favourites",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"favourite-service",
+								"api",
+								"favourites"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get favoruite",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (OK)\", function () {\r",
+									"    pm.expect(pm.response.code).equals(200)\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": {{id_user_first}},\r\n    \"productId\": {{id_product1}},\r\n    \"likeDate\": \"22-05-2025__02:05:55:547092\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/favourite-service/api/favourites/find",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"favourite-service",
+								"api",
+								"favourites",
+								"find"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get favoruite 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (OK)\", function () {\r",
+									"    pm.expect(pm.response.code).equals(200)\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": {{id_user_first}},\r\n    \"productId\": {{id_product2}},\r\n    \"likeDate\": \"23-05-2025__02:05:55:547092\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/favourite-service/api/favourites/find",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"favourite-service",
+								"api",
+								"favourites",
+								"find"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete favoruite 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 (OK)\", function () {\r",
+									"    pm.expect(pm.response.code).equals(200)\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": {{id_user_first}},\r\n    \"productId\": {{id_product2}},\r\n    \"likeDate\": \"23-05-2025__02:05:55:547092\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/favourite-service/api/favourites/delete",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"favourite-service",
+								"api",
+								"favourites",
+								"delete"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "id",
+			"value": "1"
+		},
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080"
+		},
+		{
+			"key": "id_user",
+			"value": "6",
+			"type": "string"
+		},
+		{
+			"key": "id_credential",
+			"value": "6",
+			"type": "string"
+		},
+		{
+			"key": "id_category",
+			"value": "2",
+			"type": "string"
+		},
+		{
+			"key": "id_product1",
+			"value": "7",
+			"type": "string"
+		},
+		{
+			"key": "id_product2",
+			"value": "8",
+			"type": "string"
+		},
+		{
+			"key": "id_cart",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "lastname",
+			"value": "a",
+			"type": "string"
+		},
+		{
+			"key": "firstname",
+			"value": "a",
+			"type": "string"
+		},
+		{
+			"key": "email",
+			"value": "a",
+			"type": "string"
+		},
+		{
+			"key": "phone",
+			"value": "a",
+			"type": "string"
+		},
+		{
+			"key": "imageurl",
+			"value": "a",
+			"type": "string"
+		},
+		{
+			"key": "id_order",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "id_order2",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "id_user_first",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "id_credential_first",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "id_payment",
+			"value": "1",
+			"type": "string"
+		}
+	]
+}
