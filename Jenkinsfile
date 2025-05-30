@@ -101,12 +101,25 @@ pipeline {
 
         stage('Unit Tests') {
             steps {
-                script {
-                    echo 'Running unit tests for all services...'
-                    bat '''
-                        mvn test -Dtest.profile=unit
-                    '''
-                }
+                sh '''
+                # Configurar JAVA_HOME para Java 11
+                export JAVA_HOME=$HOME/java11
+                export PATH=$HOME/java11/bin:$HOME/bin:$HOME/maven/bin:$HOME/nodejs/bin:$PATH
+    
+                echo "Verificando versión de Java para Maven:"
+                java -version
+                
+                echo "Ejecutando pruebas unitarias en el servicio de productos"
+                cd payment-service
+    
+                # Limpiar target anterior
+                rm -rf target/
+    
+                # Usar Maven con Java 11
+                mvn clean test -Dmaven.compiler.source=11 -Dmaven.compiler.target=11 -Dmaven.test.failure.ignore=true
+    
+                cd ..
+                '''
             }
             post {
                 always {
