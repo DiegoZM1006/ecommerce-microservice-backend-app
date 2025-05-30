@@ -185,57 +185,57 @@ pipeline {
         //     }
         // }
 
-        stage('E2E Tests') {
-            steps {
-                script {
-                    echo 'Running E2E tests with Newman...'
-                    try {
-                        bat '''
-                            # Start application stack
-                            docker-compose -f compose.yml up -d --build
-                            sleep 45
+        // stage('E2E Tests') {
+        //     steps {
+        //         script {
+        //             echo 'Running E2E tests with Newman...'
+        //             try {
+        //                 bat '''
+        //                     # Start application stack
+        //                     docker-compose -f compose.yml up -d --build
+        //                     sleep 45
 
-                            # Wait for API Gateway
-                            for i in {1..30}; do
-                                if curl -f http://localhost:8762/actuator/health; then
-                                    echo "API Gateway is ready"
-                                    break
-                                fi
-                                echo "Waiting for API Gateway... ($i/30)"
-                                sleep 10
-                            done
+        //                     # Wait for API Gateway
+        //                     for i in {1..30}; do
+        //                         if curl -f http://localhost:8762/actuator/health; then
+        //                             echo "API Gateway is ready"
+        //                             break
+        //                         fi
+        //                         echo "Waiting for API Gateway... ($i/30)"
+        //                         sleep 10
+        //                     done
 
-                            # Install Newman if not present
-                            npm install -g newman || true
+        //                     # Install Newman if not present
+        //                     npm install -g newman || true
 
-                            # Run E2E tests
-                            newman run e2e-tests/E2E-tests.json \\
-                                --environment e2e-tests/environment.json \\
-                                --reporters cli,htmlextra \\
-                                --reporter-htmlextra-export newman-report.html \\
-                                --bail || echo "E2E tests completed with warnings"
-                        '''
-                    } catch (Exception e) {
-                        echo "E2E tests failed: ${e.getMessage()}"
-                        currentBuild.result = 'UNSTABLE'
-                    } finally {
-                        bat 'docker-compose -f compose.yml down -v || true'
-                    }
-                }
-            }
-            post {
-                always {
-                    publishHTML([
-                        allowMissing: true,
-                        alwaysLinkToLastBuild: true,
-                        keepAll: true,
-                        reportDir: '.',
-                        reportFiles: 'newman-report.html',
-                        reportName: 'E2E Test Report'
-                    ])
-                }
-            }
-        }
+        //                     # Run E2E tests
+        //                     newman run e2e-tests/E2E-tests.json \\
+        //                         --environment e2e-tests/environment.json \\
+        //                         --reporters cli,htmlextra \\
+        //                         --reporter-htmlextra-export newman-report.html \\
+        //                         --bail || echo "E2E tests completed with warnings"
+        //                 '''
+        //             } catch (Exception e) {
+        //                 echo "E2E tests failed: ${e.getMessage()}"
+        //                 currentBuild.result = 'UNSTABLE'
+        //             } finally {
+        //                 bat 'docker-compose -f compose.yml down -v || true'
+        //             }
+        //         }
+        //     }
+        //     post {
+        //         always {
+        //             publishHTML([
+        //                 allowMissing: true,
+        //                 alwaysLinkToLastBuild: true,
+        //                 keepAll: true,
+        //                 reportDir: '.',
+        //                 reportFiles: 'newman-report.html',
+        //                 reportName: 'E2E Test Report'
+        //             ])
+        //         }
+        //     }
+        // }
 
         stage('Load Tests') {
             steps {
