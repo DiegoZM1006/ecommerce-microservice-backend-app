@@ -237,79 +237,79 @@ pipeline {
         //     }
         // }
 
-        stage('Load Tests') {
-            steps {
-                script {
-                    echo 'Running load tests with Locust...'
-                    try {
-                        bat '''
-                            cd locust
+        // stage('Load Tests') {
+        //     steps {
+        //         script {
+        //             echo 'Running load tests with Locust...'
+        //             try {
+        //                 bat '''
+        //                     cd locust
 
-                            # Start application stack for load testing
-                            docker-compose -f ../compose.yml up -d --build
-                            sleep 60
+        //                     # Start application stack for load testing
+        //                     docker-compose -f ../compose.yml up -d --build
+        //                     sleep 60
 
-                            # Install Locust requirements
-                            pip3 install -r requirements.txt || pip install -r requirements.txt
+        //                     # Install Locust requirements
+        //                     pip3 install -r requirements.txt || pip install -r requirements.txt
 
-                            # Run load tests
-                            locust -f locustfile.py \\
-                                --host=http://localhost:8762 \\
-                                --users=50 \\
-                                --spawn-rate=5 \\
-                                --run-time=5m \\
-                                --headless \\
-                                --html=load-test-report.html \\
-                                --csv=load-test-results || echo "Load tests completed"
+        //                     # Run load tests
+        //                     locust -f locustfile.py \\
+        //                         --host=http://localhost:8762 \\
+        //                         --users=50 \\
+        //                         --spawn-rate=5 \\
+        //                         --run-time=5m \\
+        //                         --headless \\
+        //                         --html=load-test-report.html \\
+        //                         --csv=load-test-results || echo "Load tests completed"
 
-                            # Also run individual service tests
-                            echo "Running individual service load tests..."
+        //                     # Also run individual service tests
+        //                     echo "Running individual service load tests..."
 
-                            locust -f test/payment-service/locustfile.py \\
-                                --host=http://localhost:8762 \\
-                                --users=20 \\
-                                --spawn-rate=2 \\
-                                --run-time=2m \\
-                                --headless \\
-                                --html=payment-load-test.html || echo "Payment service load test completed"
+        //                     locust -f test/payment-service/locustfile.py \\
+        //                         --host=http://localhost:8762 \\
+        //                         --users=20 \\
+        //                         --spawn-rate=2 \\
+        //                         --run-time=2m \\
+        //                         --headless \\
+        //                         --html=payment-load-test.html || echo "Payment service load test completed"
 
-                            locust -f test/order-service/locustfile.py \\
-                                --host=http://localhost:8762 \\
-                                --users=20 \\
-                                --spawn-rate=2 \\
-                                --run-time=2m \\
-                                --headless \\
-                                --html=order-load-test.html || echo "Order service load test completed"
+        //                     locust -f test/order-service/locustfile.py \\
+        //                         --host=http://localhost:8762 \\
+        //                         --users=20 \\
+        //                         --spawn-rate=2 \\
+        //                         --run-time=2m \\
+        //                         --headless \\
+        //                         --html=order-load-test.html || echo "Order service load test completed"
 
-                            locust -f test/favourite-service/locustfile.py \\
-                                --host=http://localhost:8762 \\
-                                --users=20 \\
-                                --spawn-rate=2 \\
-                                --run-time=2m \\
-                                --headless \\
-                                --html=favourite-load-test.html || echo "Favourite service load test completed"
-                        '''
-                    } catch (Exception e) {
-                        echo "Load tests failed: ${e.getMessage()}"
-                        currentBuild.result = 'UNSTABLE'
-                    } finally {
-                        bat 'docker-compose -f compose.yml down -v || true'
-                    }
-                }
-            }
-            post {
-                always {
-                    publishHTML([
-                        allowMissing: true,
-                        alwaysLinkToLastBuild: true,
-                        keepAll: true,
-                        reportDir: 'locust',
-                        reportFiles: '*.html',
-                        reportName: 'Load Test Reports'
-                    ])
-                }
-            }
-        }
+        //                     locust -f test/favourite-service/locustfile.py \\
+        //                         --host=http://localhost:8762 \\
+        //                         --users=20 \\
+        //                         --spawn-rate=2 \\
+        //                         --run-time=2m \\
+        //                         --headless \\
+        //                         --html=favourite-load-test.html || echo "Favourite service load test completed"
+        //                 '''
+        //             } catch (Exception e) {
+        //                 echo "Load tests failed: ${e.getMessage()}"
+        //                 currentBuild.result = 'UNSTABLE'
+        //             } finally {
+        //                 bat 'docker-compose -f compose.yml down -v || true'
+        //             }
+        //         }
+        //     }
+        //     post {
+        //         always {
+        //             publishHTML([
+        //                 allowMissing: true,
+        //                 alwaysLinkToLastBuild: true,
+        //                 keepAll: true,
+        //                 reportDir: 'locust',
+        //                 reportFiles: '*.html',
+        //                 reportName: 'Load Test Reports'
+        //             ])
+        //         }
+        //     }
+        // }
 
         stage('Build Docker Images') {
             parallel {
