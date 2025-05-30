@@ -12,8 +12,8 @@ pipeline {
         MAVEN_OPTS = '-Dmaven.test.failure.ignore=false'
         DOCKER_REGISTRY = 'localhost:5000'
         KUBECONFIG = "${WORKSPACE}/.kube/config"
-        NAMESPACE = "${env.BRANCH_NAME == 'master' ? 'production' : (env.BRANCH_NAME == 'prod' ? 'production' : 'staging')}"
-        ENVIRONMENT = "${env.BRANCH_NAME == 'master' ? 'prod' : (env.BRANCH_NAME == 'prod' ? 'prod' : 'stage')}"
+        NAMESPACE = 'staging'
+        ENVIRONMENT = 'stage'
     }
 
     options {
@@ -27,7 +27,7 @@ pipeline {
         stage('Environment Setup') {
             steps {
                 script {
-                    echo "Building branch: ${env.BRANCH_NAME}"
+                    echo 'Building pipeline in staging environment'
                     echo "Environment: ${ENVIRONMENT}"
                     echo "Namespace: ${NAMESPACE}"
 
@@ -39,30 +39,18 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                checkout scm
-                script {
-                    env.GIT_COMMIT = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
-                    env.BUILD_VERSION = "${env.BUILD_NUMBER}-${env.GIT_COMMIT.take(7)}"
-                }
-                echo "Build version: ${env.BUILD_VERSION}"
+                git branch: "${env.BRANCH_NAME}", url: 'https://github.com/darwinl-06/ecommerce-microservice-backend-app.git'
             }
         }
 
         stage('Code Quality Analysis') {
             parallel {
                 stage('Security Scan') {
-                    when {
-                        anyOf {
-                            branch 'master'
-                            branch 'prod'
-                            branch 'develop'
-                        }
-                    }
                     steps {
                         script {
                             try {
                                 // OWASP Dependency Check
-                                sh 'mvn org.owasp:dependency-check-maven:check'
+                                bat 'mvn org.owasp:dependency-check-maven:check'
                             } catch (Exception e) {
                                 echo "Security scan failed: ${e.getMessage()}"
                                 currentBuild.result = 'UNSTABLE'
@@ -82,20 +70,13 @@ pipeline {
                         }
                     }
                 }
-
+                
                 stage('Static Code Analysis') {
-                    when {
-                        anyOf {
-                            branch 'master'
-                            branch 'prod'
-                            branch 'develop'
-                        }
-                    }
                     steps {
                         script {
                             try {
                                 // SpotBugs analysis
-                                sh 'mvn compile spotbugs:check'
+                                bat 'mvn compile spotbugs:check'
                             } catch (Exception e) {
                                 echo "Static analysis failed: ${e.getMessage()}"
                                 currentBuild.result = 'UNSTABLE'
@@ -110,7 +91,7 @@ pipeline {
             steps {
                 script {
                     echo 'Building all microservices...'
-                    sh '''
+                    bat '''
                         mvn clean compile -DskipTests=true
                         echo "Build completed successfully"
                     '''
@@ -122,7 +103,7 @@ pipeline {
             steps {
                 script {
                     echo 'Running unit tests for all services...'
-                    sh '''
+                    bat '''
                         mvn test -Dtest.profile=unit
                     '''
                 }
@@ -146,7 +127,7 @@ pipeline {
             steps {
                 script {
                     echo 'Packaging all services...'
-                    sh '''
+                    bat '''
                         mvn package -DskipTests=true
                     '''
                 }
@@ -154,19 +135,11 @@ pipeline {
         }
 
         stage('Integration Tests') {
-            when {
-                anyOf {
-                    branch 'master'
-                    branch 'prod'
-                    branch 'develop'
-                    branch 'staging'
-                }
-            }
             steps {
                 script {
                     echo 'Running integration tests...'
                     try {
-                        sh '''
+                        bat '''
                             # Start test containers
                             docker-compose -f compose.yml up -d --build
                             sleep 30
@@ -188,7 +161,7 @@ pipeline {
                         echo "Integration tests failed: ${e.getMessage()}"
                         currentBuild.result = 'UNSTABLE'
                     } finally {
-                        sh 'docker-compose -f compose.yml down -v || true'
+                        bat 'docker-compose -f compose.yml down -v || true'
                     }
                 }
             }
@@ -200,18 +173,11 @@ pipeline {
         }
 
         stage('E2E Tests') {
-            when {
-                anyOf {
-                    branch 'master'
-                    branch 'prod'
-                    branch 'staging'
-                }
-            }
             steps {
                 script {
                     echo 'Running E2E tests with Newman...'
                     try {
-                        sh '''
+                        bat '''
                             # Start application stack
                             docker-compose -f compose.yml up -d --build
                             sleep 45
@@ -240,7 +206,7 @@ pipeline {
                         echo "E2E tests failed: ${e.getMessage()}"
                         currentBuild.result = 'UNSTABLE'
                     } finally {
-                        sh 'docker-compose -f compose.yml down -v || true'
+                        bat 'docker-compose -f compose.yml down -v || true'
                     }
                 }
             }
@@ -259,18 +225,11 @@ pipeline {
         }
 
         stage('Load Tests') {
-            when {
-                anyOf {
-                    branch 'master'
-                    branch 'prod'
-                    branch 'staging'
-                }
-            }
             steps {
                 script {
                     echo 'Running load tests with Locust...'
                     try {
-                        sh '''
+                        bat '''
                             cd locust
 
                             # Start application stack for load testing
@@ -321,7 +280,7 @@ pipeline {
                         echo "Load tests failed: ${e.getMessage()}"
                         currentBuild.result = 'UNSTABLE'
                     } finally {
-                        sh 'docker-compose -f compose.yml down -v || true'
+                        bat 'docker-compose -f compose.yml down -v || true'
                     }
                 }
             }
@@ -340,20 +299,12 @@ pipeline {
         }
 
         stage('Build Docker Images') {
-            when {
-                anyOf {
-                    branch 'master'
-                    branch 'prod'
-                    branch 'staging'
-                    branch 'develop'
-                }
-            }
             parallel {
                 stage('Infrastructure Images') {
                     steps {
                         script {
                             echo 'Building infrastructure service images...'
-                            sh '''
+                            bat '''
                                 # Build infrastructure services
                                 docker build -t ${DOCKER_REGISTRY}/service-discovery:${BUILD_VERSION} service-discovery/
                                 docker build -t ${DOCKER_REGISTRY}/cloud-config:${BUILD_VERSION} cloud-config/
@@ -372,7 +323,7 @@ pipeline {
                     steps {
                         script {
                             echo 'Building business service images...'
-                            sh '''
+                            bat '''
                                 # Build business services
                                 docker build -t ${DOCKER_REGISTRY}/payment-service:${BUILD_VERSION} payment-service/
                                 docker build -t ${DOCKER_REGISTRY}/order-service:${BUILD_VERSION} order-service/
@@ -398,17 +349,10 @@ pipeline {
         }
 
         stage('Push to Registry') {
-            when {
-                anyOf {
-                    branch 'master'
-                    branch 'prod'
-                    branch 'staging'
-                }
-            }
             steps {
                 script {
                     echo 'Pushing images to registry...'
-                    sh '''
+                    bat '''
                         # Push infrastructure services
                         docker push ${DOCKER_REGISTRY}/service-discovery:${BUILD_VERSION}
                         docker push ${DOCKER_REGISTRY}/cloud-config:${BUILD_VERSION}
@@ -440,17 +384,10 @@ pipeline {
         }
 
         stage('Deploy to Kubernetes') {
-            when {
-                anyOf {
-                    branch 'master'
-                    branch 'prod'
-                    branch 'staging'
-                }
-            }
             steps {
                 script {
                     echo "Deploying to Kubernetes namespace: ${NAMESPACE}"
-                    sh '''
+                    bat '''
                         # Create namespace if it doesn't exist
                         kubectl create namespace ${NAMESPACE} --dry-run=client -o yaml | kubectl apply -f -
 
@@ -505,17 +442,10 @@ pipeline {
         }
 
         stage('Verify Deployment') {
-            when {
-                anyOf {
-                    branch 'master'
-                    branch 'prod'
-                    branch 'staging'
-                }
-            }
             steps {
                 script {
                     echo 'Verifying deployment...'
-                    sh '''
+                    bat '''
                         # Wait for all deployments to be ready
                         echo "Waiting for deployments to be ready..."
 
@@ -561,16 +491,10 @@ pipeline {
         }
 
         stage('Smoke Tests') {
-            when {
-                anyOf {
-                    branch 'master'
-                    branch 'prod'
-                }
-            }
             steps {
                 script {
                     echo 'Running smoke tests on deployed services...'
-                    sh '''
+                    bat '''
                         # Port forward for smoke tests
                         kubectl port-forward svc/api-gateway 8762:8080 -n ${NAMESPACE} &
                         PF_PID=$!
@@ -608,7 +532,7 @@ pipeline {
                 archiveArtifacts artifacts: 'newman-report.html', allowEmptyArchive: true
 
                 // Clean up Docker images to save space
-                sh '''
+                bat '''
                     docker system prune -f --volumes || true
                     docker image prune -f || true
                 '''
@@ -642,7 +566,7 @@ pipeline {
             script {
                 echo 'Pipeline failed!'
                 // Clean up on failure
-                sh '''
+                bat '''
                     docker-compose -f compose.yml down -v || true
                     kubectl delete namespace ${NAMESPACE} --ignore-not-found=true || true
                 '''
@@ -694,7 +618,7 @@ pipeline {
                 cleanWs()
 
                 // Clean up any remaining port forwards
-                sh '''
+                bat '''
                     pkill -f "kubectl port-forward" || true
                     pkill -f "locust" || true
                 '''
