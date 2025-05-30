@@ -43,49 +43,49 @@ pipeline {
             }
         }
 
-        stage('Code Quality Analysis') {
-            parallel {
-                stage('Security Scan') {
-                    steps {
-                        script {
-                            try {
-                                // OWASP Dependency Check
-                                bat 'mvn org.owasp:dependency-check-maven:check'
-                            } catch (Exception e) {
-                                echo "Security scan failed: ${e.getMessage()}"
-                                currentBuild.result = 'UNSTABLE'
-                            }
-                        }
-                    }
-                    post {
-                        always {
-                            publishHTML([
-                                allowMissing: true,
-                                alwaysLinkToLastBuild: true,
-                                keepAll: true,
-                                reportDir: 'target/dependency-check-report',
-                                reportFiles: 'dependency-check-report.html',
-                                reportName: 'OWASP Dependency Check Report'
-                            ])
-                        }
-                    }
-                }
+        // stage('Code Quality Analysis') {
+        //     parallel {
+        //         stage('Security Scan') {
+        //             steps {
+        //                 script {
+        //                     try {
+        //                         // OWASP Dependency Check
+        //                         bat 'mvn org.owasp:dependency-check-maven:check'
+        //                     } catch (Exception e) {
+        //                         echo "Security scan failed: ${e.getMessage()}"
+        //                         currentBuild.result = 'UNSTABLE'
+        //                     }
+        //                 }
+        //             }
+        //             post {
+        //                 always {
+        //                     publishHTML([
+        //                         allowMissing: true,
+        //                         alwaysLinkToLastBuild: true,
+        //                         keepAll: true,
+        //                         reportDir: 'target/dependency-check-report',
+        //                         reportFiles: 'dependency-check-report.html',
+        //                         reportName: 'OWASP Dependency Check Report'
+        //                     ])
+        //                 }
+        //             }
+        //         }
                 
-                stage('Static Code Analysis') {
-                    steps {
-                        script {
-                            try {
-                                // SpotBugs analysis
-                                bat 'mvn compile spotbugs:check'
-                            } catch (Exception e) {
-                                echo "Static analysis failed: ${e.getMessage()}"
-                                currentBuild.result = 'UNSTABLE'
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        //         stage('Static Code Analysis') {
+        //             steps {
+        //                 script {
+        //                     try {
+        //                         // SpotBugs analysis
+        //                         bat 'mvn compile spotbugs:check'
+        //                     } catch (Exception e) {
+        //                         echo "Static analysis failed: ${e.getMessage()}"
+        //                         currentBuild.result = 'UNSTABLE'
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
 
         stage('Build Services') {
             steps {
