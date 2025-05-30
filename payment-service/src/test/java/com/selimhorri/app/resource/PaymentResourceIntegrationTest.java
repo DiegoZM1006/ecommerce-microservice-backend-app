@@ -26,14 +26,13 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.selimhorri.app.config.TestConfig;
 import com.selimhorri.app.domain.Payment;
 import com.selimhorri.app.domain.PaymentStatus;
 import com.selimhorri.app.dto.OrderDto;
 import com.selimhorri.app.dto.PaymentDto;
 import com.selimhorri.app.repository.PaymentRepository;
 
-@SpringBootTest(classes = TestConfig.class)
+@SpringBootTest
 @AutoConfigureWebMvc
 @ActiveProfiles("test")
 @Transactional
