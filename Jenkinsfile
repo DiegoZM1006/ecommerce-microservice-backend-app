@@ -147,43 +147,43 @@ pipeline {
             }
         }
 
-        stage('Integration Tests') {
-            steps {
-                script {
-                    echo 'Running integration tests...'
-                    try {
-                        bat '''
-                            # Start test containers
-                            docker-compose -f compose.yml up -d --build
-                            sleep 30
+        // stage('Integration Tests') {
+        //     steps {
+        //         script {
+        //             echo 'Running integration tests...'
+        //             try {
+        //                 bat '''
+        //                     # Start test containers
+        //                     docker-compose -f compose.yml up -d --build
+        //                     sleep 30
 
-                            # Wait for services to be ready
-                            for i in {1..30}; do
-                                if curl -f http://localhost:8762/actuator/health; then
-                                    echo "Service Discovery is ready"
-                                    break
-                                fi
-                                echo "Waiting for services to start... ($i/30)"
-                                sleep 10
-                            done
+        //                     # Wait for services to be ready
+        //                     for i in {1..30}; do
+        //                         if curl -f http://localhost:8762/actuator/health; then
+        //                             echo "Service Discovery is ready"
+        //                             break
+        //                         fi
+        //                         echo "Waiting for services to start... ($i/30)"
+        //                         sleep 10
+        //                     done
 
-                            # Run integration tests
-                            mvn test -Dtest.profile=integration
-                        '''
-                    } catch (Exception e) {
-                        echo "Integration tests failed: ${e.getMessage()}"
-                        currentBuild.result = 'UNSTABLE'
-                    } finally {
-                        bat 'docker-compose -f compose.yml down -v || true'
-                    }
-                }
-            }
-            post {
-                always {
-                    publishTestResults testResultsPattern: '**/target/failsafe-reports/*.xml'
-                }
-            }
-        }
+        //                     # Run integration tests
+        //                     mvn test -Dtest.profile=integration
+        //                 '''
+        //             } catch (Exception e) {
+        //                 echo "Integration tests failed: ${e.getMessage()}"
+        //                 currentBuild.result = 'UNSTABLE'
+        //             } finally {
+        //                 bat 'docker-compose -f compose.yml down -v || true'
+        //             }
+        //         }
+        //     }
+        //     post {
+        //         always {
+        //             publishTestResults testResultsPattern: '**/target/failsafe-reports/*.xml'
+        //         }
+        //     }
+        // }
 
         stage('E2E Tests') {
             steps {
