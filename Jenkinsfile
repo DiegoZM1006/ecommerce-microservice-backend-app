@@ -10,7 +10,7 @@ pipeline {
 
     environment {
         MAVEN_OPTS = '-Dmaven.test.failure.ignore=false'
-        DOCKER_REGISTRY = 'localhost:5000'
+        DOCKER_REGISTRY = 'diegozm'
         KUBECONFIG = "${WORKSPACE}/.kube/config"
         NAMESPACE = 'staging'
         ENVIRONMENT = 'stage'
