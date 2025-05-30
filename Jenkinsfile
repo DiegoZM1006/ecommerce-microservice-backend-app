@@ -39,7 +39,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git branch: "${env.BRANCH_NAME}", url: 'https://github.com/darwinl-06/ecommerce-microservice-backend-app.git'
+                git branch: "${env.BRANCH_NAME}", url: 'https://github.com/DiegoZM1006/ecommerce-microservice-backend-app.git'
             }
         }
 
