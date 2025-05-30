@@ -71,7 +71,7 @@ pipeline {
             steps {
                  script {
                     SERVICES.split().each { service ->
-                        bat "docker build -t diegozm/${service}:latest .\${service}"
+                        bat "docker build -t diegozm/${service}:latest ./${service}"
                     }
                 }
             }
