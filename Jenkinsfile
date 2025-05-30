@@ -101,7 +101,7 @@ pipeline {
 
         stage('Unit Tests') {
             steps {
-                sh '''
+                bat '''
                 # Configurar JAVA_HOME para Java 11
                 export JAVA_HOME=$HOME/java11
                 export PATH=$HOME/java11/bin:$HOME/bin:$HOME/maven/bin:$HOME/nodejs/bin:$PATH
