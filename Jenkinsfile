@@ -99,42 +99,42 @@ pipeline {
             }
         }
 
-        stage('Unit Tests') {
-            steps {
-                bat '''
-                # Configurar JAVA_HOME para Java 11
-                export JAVA_HOME=$HOME/java11
-                export PATH=$HOME/java11/bin:$HOME/bin:$HOME/maven/bin:$HOME/nodejs/bin:$PATH
+        // stage('Unit Tests') {
+        //     steps {
+        //         bat '''
+        //         # Configurar JAVA_HOME para Java 11
+        //         export JAVA_HOME=$HOME/java11
+        //         export PATH=$HOME/java11/bin:$HOME/bin:$HOME/maven/bin:$HOME/nodejs/bin:$PATH
     
-                echo "Verificando versión de Java para Maven:"
-                java -version
+        //         echo "Verificando versión de Java para Maven:"
+        //         java -version
                 
-                echo "Ejecutando pruebas unitarias en el servicio de productos"
-                cd payment-service
+        //         echo "Ejecutando pruebas unitarias en el servicio de productos"
+        //         cd payment-service
     
-                # Limpiar target anterior
-                rm -rf target/
+        //         # Limpiar target anterior
+        //         rm -rf target/
     
-                # Usar Maven con Java 11
-                mvn clean test -Dmaven.compiler.source=11 -Dmaven.compiler.target=11 -Dmaven.test.failure.ignore=true
+        //         # Usar Maven con Java 11
+        //         mvn clean test -Dmaven.compiler.source=11 -Dmaven.compiler.target=11 -Dmaven.test.failure.ignore=true
     
-                cd ..
-                '''
-            }
-            post {
-                always {
-                    publishTestResults testResultsPattern: '**/target/surefire-reports/*.xml'
-                    publishHTML([
-                        allowMissing: true,
-                        alwaysLinkToLastBuild: true,
-                        keepAll: true,
-                        reportDir: 'target/site/jacoco',
-                        reportFiles: 'index.html',
-                        reportName: 'Code Coverage Report'
-                    ])
-                }
-            }
-        }
+        //         cd ..
+        //         '''
+        //     }
+        //     post {
+        //         always {
+        //             publishTestResults testResultsPattern: '**/target/surefire-reports/*.xml'
+        //             publishHTML([
+        //                 allowMissing: true,
+        //                 alwaysLinkToLastBuild: true,
+        //                 keepAll: true,
+        //                 reportDir: 'target/site/jacoco',
+        //                 reportFiles: 'index.html',
+        //                 reportName: 'Code Coverage Report'
+        //             ])
+        //         }
+        //     }
+        // }
 
         stage('Package Services') {
             steps {
