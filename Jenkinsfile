@@ -67,45 +67,21 @@ pipeline {
             }
         }
 
-        stage('Build docker images') {
+        stage('Build & Push Docker Images') {
+            when { anyOf { branch 'stage'; branch 'master' } }
             steps {
-                 script {
-                    SERVICES.split().each { service ->
-                        bat "docker build -t diegozm/${service}:latest ./${service}"
-                    }
-                }
-            }
-        }
+                withCredentials([string(credentialsId: "${DOCKER_CREDENTIALS_ID}", variable: 'credential')]) {
+                    bat "echo ${credential} | docker login -u ${DOCKERHUB_USER} --password-stdin"
 
-        stage('Push images to DockerHub') {
-            steps {
-                script {
-                    withCredentials([string(credentialsId: 'password', variable: 'credential')]) {
-                        bat "docker login -u diegozm -p %credential%"
+                    script {
                         SERVICES.split().each { service ->
-                            bat "docker push diegozm/${service}:latest"
+                            bat "docker build -t ${DOCKERHUB_USER}/${service}:${IMAGE_TAG} .\\${service}"
+                            bat "docker push ${DOCKERHUB_USER}/${service}:${IMAGE_TAG}"
                         }
                     }
                 }
             }
         }
-
-        // stage('Build & Push Docker Images') {
-        //     when { anyOf { branch 'stage'; branch 'master' } }
-        //     steps {
-        //         withCredentials([string(credentialsId: "${DOCKER_CREDENTIALS_ID}", variable: 'credential')]) {
-        //             // bat "echo ${DOCKERHUB_PASSWORD} | docker login -u ${DOCKERHUB_USER} %password%"
-        //             bat "docker login -u ${DOCKERHUB_USER} -p %credential%"
-
-        //             script {
-        //                 SERVICES.split().each { service ->
-        //                     bat "docker build -t ${DOCKERHUB_USER}/${service}:latest .\\${service}"
-        //                     bat "docker push ${DOCKERHUB_USER}/${service}:latest"
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
 
         stage('Unit Tests') {
             when {
