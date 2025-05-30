@@ -92,7 +92,7 @@ pipeline {
                 script {
                     echo 'Building all microservices...'
                     bat '''
-                        mvn clean compile -DskipTests=true
+                        mvn clean compile -DskipTests
                         echo "Build completed successfully"
                     '''
                 }
@@ -128,7 +128,7 @@ pipeline {
                 script {
                     echo 'Packaging all services...'
                     bat '''
-                        mvn package -DskipTests=true
+                        mvn package -DskipTests
                     '''
                 }
             }
