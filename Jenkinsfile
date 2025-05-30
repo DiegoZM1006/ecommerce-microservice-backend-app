@@ -76,7 +76,7 @@ pipeline {
 
                     script {
                         SERVICES.split().each { service ->
-                            bat "docker build -t ${DOCKERHUB_USER}/${service}:latest.\\${service}"
+                            bat "docker build -t ${DOCKERHUB_USER}/${service}:latest .\\${service}"
                             bat "docker push ${DOCKERHUB_USER}/${service}:latest"
                         }
                     }
