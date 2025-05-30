@@ -61,7 +61,7 @@ pipeline {
         }
 
         stage('Build & Package') {
-            when { anyOf { branch 'stage'; } }
+            when { anyOf { branch 'stage'; branch 'master'; branch 'dev'; } }
             steps {
                 bat "mvn clean package -DskipTests"
             }
