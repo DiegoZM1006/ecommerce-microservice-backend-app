@@ -70,8 +70,9 @@ pipeline {
         stage('Build & Push Docker Images') {
             when { anyOf { branch 'stage'; branch 'master' } }
             steps {
-                withCredentials([string(credentialsId: "${DOCKER_CREDENTIALS_ID}", variable: 'DOCKERHUB_PASSWORD')]) {
-                    bat "echo ${DOCKERHUB_PASSWORD} | docker login -u ${DOCKERHUB_USER} --password-stdin"
+                withCredentials([string(credentialsId: "${DOCKER_CREDENTIALS_ID}", variable: 'credential')]) {
+                    // bat "echo ${DOCKERHUB_PASSWORD} | docker login -u ${DOCKERHUB_USER} %password%"
+                    bat "docker login -u ${DOCKERHUB_USER} -p %credential%"
 
                     script {
                         SERVICES.split().each { service ->
